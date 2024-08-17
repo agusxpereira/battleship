@@ -11,10 +11,42 @@
         <h1>BattleShip</h1>
     </header>
     <div class="main-container">
+        <div id="ui-player-one">
+            <div class="display-info">
+                <h2 class="user-name"></h2>
+            </div>
+            <div id="display-board-one" class="show">
 
+            </div> 
+            <div id="fleet-user-one" class="row-center" >
+                
+            </div>
+        </div>
+        <div id="ui-player-two" >
+            <div class="display-info">
+                <h2 class="user-name-two">PC</h2>
+            </div>
+            <div id="display-board-two" class="show"></div>
+            <div id="fleet-user-two"></div>
+        </div>
     </div>
     <footer></footer>
+    <div class="modal choose-game">
+        <div class="choose-game-vs-pc">
+            <h2>Player vs PC</h2> 
+            
+            <button id="confirm-player-vs-pc">Select</button>
+        </div>
+        <div class="choose-"></div>
+    </div>
+    <div class="modal player-vs-pc">
+        <form action="" id="get-info-user">
 
+            <input type="text" name="username" id="username" placeholder="username">
+            <button id="send-info-user">Jugar!</button>
+        </form>
+    </div>
+    <div class="modal player-vs-player"></div>
     <script type="module" src="handleGame.js"></script>
 
     <!-- <script> 

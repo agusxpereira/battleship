@@ -9,16 +9,110 @@
     --main-color: #1E40AF;
     --second-color:#111827;
     --main-color-text:#F9FAFB; 
+}
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+.choose-game,.player-vs-pc{
+    
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
 
-} 
+
+.choose-game-vs-pc, #get-info-user{
+    width: 50%;
+    min-height: 70dvh;
+    background-color: #F9FAFB;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.show{
+    display: flex;
+}
+
+.hide{
+    display: none;
+}
+
 .row-center{
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
 }
+.column-center{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
 header{
     width: 100%;
+    height: 10dvh;
     background-color: var(--main-color);
     color: var(--main-color-text);
+} 
+
+.main-container{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+} 
+
+#ui-player-one, #ui-player-two{
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+}
+
+#display-board-one, #display-board-two{
+    width: 70%;
+    /* display: flex; */
+    flex-direction: row;
+    flex-wrap: wrap;
+    .box{
+        border: 1px solid black;
+        min-height: 1.5rem;
+        width: 9%;
+        border-radius: 3px;
+
+    }
+} 
+#fleet-user-one{
+    width: 80%;
+    gap:3px;
+    
+    #carrier, #battleship, #cruiser, #submarine, #destroyer{
+        
+        border: 1px solid black;
+    }
+}
+
+.box{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.ship{
+    min-height: 10px;
+    min-width: 10px;
+    background-color: red;
+    margin: 1px;
 }

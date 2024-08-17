@@ -4,12 +4,14 @@ function createBoard(fleet=null){
     let board = []; 
     let missesShot = [];
     let userFleet = [];
-    
+    let successful_shots = [];
+
+
     if(fleet!==null){
         userFleet = fleet;
 
     }
-    console.log(userFleet);
+    
     for (let index = 0; index < MAX; index++) {
         if(board.length < MAX){
             board.push([]);
@@ -34,7 +36,7 @@ function createBoard(fleet=null){
                     currentFila += ("[" + element[j] + "]");
                 }
             }
-            console.log(currentFila)
+            return currentFila;
             
         }
     }
@@ -69,20 +71,23 @@ function createBoard(fleet=null){
         let finalX = posFinal.x; 
         let finalY = posFinal.y; 
         
-        if((currentShip.lenght === (finalX+1)-(initX+1) || (currentShip.lenght === (finalX+1)-(initX+1)))){
+
+        if((currentShip.lenght === (finalX+1)-(initX+1) || currentShip.lenght === (finalY+1)-(initY+1))){
 
             if(initX == finalX){
-                currentY = initY;
+                let currentY = initY;
                 
-                while(finalY > currentY){
+                while(currentY < finalY){
                     board[initX][currentY] = ship.id;
+                   
                     currentY++;
                 } 
                 return true;
             }
 
             if(initY == finalY){
-                currentX = initX
+                //console.log(initX)
+                let currentX = initX; 
                 while(finalX > currentX){
                     board[currentX][initY] = ship.id;
                     currentX++;
@@ -98,8 +103,10 @@ function createBoard(fleet=null){
     function automaticPos(ship){
         
         let positionatedShips = 0;
+        let availableSpace = 0;
         while(positionatedShips < 1){
             let isVertical = Math.floor(Math.random()*2);
+      //      console.log(isVertical);
             let initX = 0;
             let initY = 0;
             let finalX = 0;
@@ -107,47 +114,66 @@ function createBoard(fleet=null){
             let posInit = {};
             let posFinal = {}; 
 
-            console.log("reinicializamos valroes y verificamos si es vertical o no")
             if(isVertical == 1){
                 initX = Math.floor(Math.random() * 10);
                 initY = Math.floor(Math.random() * 10);
-        
-                finalX = initX + Math.floor(Math.random() * 6);
+
+                finalX = initX + Math.floor(Math.random() * ship.lenght+1);
                 finalY = initY;
-        
+                availableSpace = 0;
+                if(finalX < 10 && board[initX][initY] === ""){
+                    for(let i = finalX; i > initX; i--){
+                        if(board[i][initY] === ""){
+                            availableSpace++;
+                        }
+                    }
+                    posInit = {
+                        x:initX, 
+                        y:initY
+                    }
+                    posFinal = {
+                        x:finalX, 
+                        y:finalY
+                    }
+                }
+
             }else{
                 initX = Math.floor(Math.random() * 10);
                 initY = Math.floor(Math.random() * 10);
         
                 finalX = initX;
-                finalY = initY + Math.floor(Math.random() * 6); 
+                finalY = initY + Math.floor(Math.random() * ship.lenght+1); 
+                availableSpace = 0;
+
+                if(finalY < 10 && board[initX][initY] === ""){
+                    for(let i = finalY; i > initY; i--){
+                        if(board[initX][i] === ""){
+                            availableSpace++; 
+                        }
+                    }
+                    posInit = {
+                        x:initX, 
+                        y:initY
+                    }
+                    posFinal = {
+                        x:finalX, 
+                        y:finalY
+                    }
+                }
             }
 
-            console.log("Ahora que sabemos que es vertical, definimimos pos Init y pos Final"); 
-            console.log("Es vertical?:" + isVertical);
-
-            if(isVertical===1 && finalX < 10 || isVertical===0&&finalY<10){   
-                posInit = {
-                    x:initX, 
-                    y:initY
-                }
-                posFinal = {
-                    x:finalX, 
-                    y:finalY
-                }
+        if(isVertical=== 1 && finalX < 10 || isVertical=== 0 && finalY < 10){   
             
-            console.log(posInit)
-            console.log(posFinal)
-
-            console.log("Ahora verificamos si coincide con el tamaño del barco:"); 
-            console.log("ship" + ship.lenght);
-            console.log("x lenght" + ((finalX+1)-(initX+1)));
-            console.log("y lenght" + (finalY-initY+1));
-           if((ship.lenght) == (finalX+1)-(initX+1) || (ship.lenght) == (finalX+1)-(initX+1) ){
-               let boolean = posShip(board, ship, posInit, posFinal);
-               if(boolean == true){
+            
+           if((ship.lenght) == (finalX+1)-(initX+1) || (ship.lenght) == (finalY+1)-(initY+1) ){
+            let boolean = false;
+            if(ship.lenght === availableSpace){
+                boolean = posShip(board, ship, posInit, posFinal);
+            }
+            if(boolean == true){
                 positionatedShips = positionatedShips + 1;
                 ship.isPositioned = true;
+            
             }else{
                 console.log("No había posciones definidas")
             }
@@ -158,12 +184,42 @@ function createBoard(fleet=null){
             
     }//automatic pos
 
+    const addMissShot = function(pos){
+        let cPos = {
+            x:pos.x,
+            y:pos.y
+        }
+
+        missesShot.push(cPos);
+    }
+
+    const getMissesShots = function(){
+        return missesShot;
+    }
+
+    const addSuccessful_shot = function(pos){
+        let cPos = {
+            x:pos.x,
+            y:pos.y
+        }
+        successful_shots.push(pos);
+    }
+
+    const getSuccessful_shots = function(){
+        return successful_shots;
+    }
+
     return{
+        board,
         viewBoard, 
         posShip, 
         automaticPos,
         getPos, 
-        getShip  
+        getShip,
+        addMissShot, 
+        getMissesShots,
+        addSuccessful_shot,
+        getSuccessful_shots
     }
 
 } 

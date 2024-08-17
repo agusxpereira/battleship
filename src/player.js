@@ -3,6 +3,7 @@ import handleBoard from "./board.js";
 function createPlayer(name="Computer"){
     let userName = name;
     let fleet = []; 
+    let shift = false;
     //creamos 5 naves, dándole un ID a cada una: 
 
     const carrier = handleShip.createShip(1, 5);//creamos una nave, dandole un id = 1 y un lenght = 5 
@@ -25,20 +26,63 @@ function createPlayer(name="Computer"){
 
     
     const attack = function(enemyBoard, pos){
-        if(enemyBoard.getPos(pos) !== ""){
-            let shipUnderAttack = gameBoard.getShip(pos); 
+        if(enemyBoard.board[pos.x][pos.y] !== ""){
+            enemyBoard.addSuccessful_shot(
+                {
+                    x:pos.x,
+                    y: pos.y
+                }
+            )
+            let idShipUnderAttack = enemyBoard.board[pos.x][pos.y]; 
+            let shipUnderAttack = ""; 
+            fleet.forEach(ship =>{
+                if (ship.id === idShipUnderAttack){
+                    shipUnderAttack = ship;
+                }
+            });
+            console.log(shipUnderAttack)
             shipUnderAttack.hit();
+            
+            return true;
         }else{
-            enemyBoard.missShots.push({
+            enemyBoard.addMissShot({
                 x : pos.x, 
                 y : pos.y 
             })
+            return false;
         }
     }
+
+    const isFleetSunked = function(){
+        let counter = 0;
+        fleet.forEach(ship => {
+            if(ship.isSunk() === true){
+                counter++;
+            }
+        });
+
+        if(counter == 5){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    const getShift = function(){
+        return shift;
+    }
+
+    const setShift= function(currentShift){
+        shift = currentShift;
+    }  
     return{
         userName,
         userBoard, 
-        fleet
+        attack,
+        fleet,
+        isFleetSunked,
+        getShift,
+        setShift
     }
 }
 

@@ -407,9 +407,38 @@ while(gameOver === false){
 
 - Seteeamos un juego nuevo creando Jugadores. Por ahora llenemos los tableros de cada jugador con coordenadas predeterminadas. Más tarde implementaremos el sistema para permitir que nuestros jugadores posiciones sus naves.
 
+
+
+
+
 - you should display both the player’s boards and render them using information from the Gameboard class/factory. (You’ll need methods to render each player’s Gameboard, so put them in an appropriate module.)
 
 - Nuestros event listener deben llevarnos paso a paso a través de nuestro juego turno por turno usando sólo métodos de otros objetos. Si en algún punto nos vemos tentados de escribir una nueva función, retrocedamos unos pasos y encontremos la clase o modulo a la que esa funcion deberia pertenecer.
+
+> Una vez ya pudimos hacer esto es momento de empezar a pensar como se va a construir el flujo del juego. En este primer caso player 1  vs pc. 
+
+> En el primer turno, podemos dejar al usuario posicionar sus naves, arrastrandolas, pero este va a ser el ultimo paso, ya está casi todo construido, falta solamente la lógica. 
+
+> Entonces con las naves ya posicionadas, es el primer turno del usuario, este ataca en el tablero de PC, si falla su tiro entonces pierde eol turno, sino puede seguir atacando. 
+
+> Una ver realizado cada ataque, debemos preguntar si la flota del usuario o de la pc está hundida. De ser así se termina el juego. 
+
+```javascript
+    
+    while(gameOver === false){
+        if(shiftPlayer1 === true){
+            let hit = player1.attack(boardPlayer2, pos); 
+            if(hit === false){
+                shiftPlayer1 = false;
+            }
+            if(player1.isFleetSunked() === true){
+                gameOver = true;
+                console.log("ha ganado la PC");
+            } 
+        }
+    }
+
+```
 
 - Para los ataques: dejemos que el usuario clickee en cualquier coordenada del tablero enemigo y enviemos el Input del usuario a métodos en nuestros objetos, y rendericemos el tablero para mostrar nueva información.
 
@@ -418,9 +447,111 @@ while(gameOver === false){
 
 - Creemos las condiciones que hagan que el juego termina una vez las naves del jugador han sido hundidas. Esta funcion es también apropiada para este módulo.
 
-5. Finish it up by implementing a system that allows players to place their ships. For example, you can let them type coordinates for each ship or have a button to cycle through random placements. ç
+5. Finish it up by implementing a system that allows players to place their ships. For example, you can let them type coordinates for each ship or have a button to cycle through random placements. 
+
+
+> Empecemos desarrollando el flujo del juego, es decir determinar cuando empiza y acaba cada turno hasta llegar a finalizar el juego para obtener un ganador. 
 
 **credito extra** <br>
 Implement drag and drop to allow players to place their ships.
 Create a 2-player option that lets users take turns by passing the laptop back and forth, or by spinning the monitor around on a desktop. Implement a ‘pass device’ screen so that players don’t see each other’s boards!
 Polish the intelligence of the computer player by having it try adjacent slots after getting a ‘hit’.
+
+
+> Vamos a cambiar el bucle que hace que el juego funcione. Esto debido a que usar `while` para esto no nos es conveniente, debido que al no ser una funcion asincronica esta ocupa todo el hilo principal, lo que hace que el navegador "se trabe" hasta que se libere el hilo principal. 
+
+> Despues de mucho probar, elegí usar un setInterval, ya que el código se está volviendo cada vez más complejo: 
+
+Vamos a usar set interval para controlar las variables del juego, principalmente si el juego termino y los turnos. 
+Si el turno es del player1
+
+
+```javascript
+    
+    let gameOver = false; 
+    let shiftPlayer1 = true; 
+    let shiftPlayer2 = false;
+
+    const attack = function(box){
+        let pos = {};
+        pos.x = Number(box.dataset.row);
+        pos.y = Number(box.dataset.column)
+        
+        let hit;
+
+        if (shiftPlayer1 === true && shiftPlayer2 === false) {    
+            hit = player1.attack(boardPlayer2, pos);
+            if (hit == false) {
+                shiftPlayer1 = false;
+                shiftPlayer2 = true;
+                return;
+            }
+        }
+        if (shiftPlayer2 === true && shiftPlayer1 === false) {
+            hit = player2.attack(boardPlayer1, pos);
+            if (hit == false) {
+                shiftPlayer1 = true;
+                shiftPlayer2 = false;
+                return;
+            }
+            return;
+        }
+    }
+
+    const prepareAttack = function(target){
+        let enemyBox = document.querySelectorAll(target);
+        enemyBox.forEach(box=>{
+            box.addEventListener("click",()=>{
+                attack(box);
+            })
+        });
+
+    };
+
+    const handleShift = function(){
+        if (shiftPlayer1 == true && shiftPlayer2 == false) {
+            prepareAttack("#display-board-two>.box");    
+            if (player1.isFleetSunked() === true) {
+                gameOver = true;
+                winner = "PC";
+                return;
+            }
+        }
+        if(shiftPlayer2 == true && shiftPlayer1 == false) {               
+            prepareAttack("#display-board-one>.box");
+            if (player2.isFleetSunked() === true) {
+                gameOver = true;
+                winner = "Player 1";
+                return;
+            }
+        }
+    }
+
+
+
+    let gameinterval = setInverval(()=>{
+        if(gameOver == false){
+            handleShift(); 
+        }else{
+            clearInterval(gameInterval);
+        }
+    }, 1000);
+
+```
+Ahora vamos a desarrollar la feature del tablero según el turno del player. Cuando es el turno del player1 se muestra el tablero del player 2, con todos nuestros disparos fallidos representados como una "X", un disparo acertado representado como "O", y si `currentShip.isSunk() === true` se representa como `ship.id`. Esta funcionalidad la vamos a manejar llamando al handleDom.
+
+```javascript
+    
+    const handleBoard = function(board, target){
+        const boardBoardDom = document.getElementById(target); 
+        const currentBoard = currentBoard.board; 
+        const missesShotts = currentBoard.getMissesShots();
+        const accurateShots = currentBoard.getAccurateShots(); 
+
+        missesShots.forEach(shot =>{
+            let box = currentBoard.getBox(shot);
+            console.log(`${target} .data-row=${shot.x} .data-column=${shot.y}`);
+        })
+    }
+
+```
