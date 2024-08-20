@@ -4,6 +4,7 @@ function createPlayer(name="Computer"){
     let userName = name;
     let fleet = []; 
     let shift = false;
+    let sunkenShips = 0;
     //creamos 5 naves, dándole un ID a cada una: 
 
     const carrier = handleShip.createShip(1, 5);//creamos una nave, dandole un id = 1 y un lenght = 5 
@@ -42,7 +43,10 @@ function createPlayer(name="Computer"){
             });
             console.log(shipUnderAttack)
             shipUnderAttack.hit();
-            
+            console.log(shipUnderAttack.isSunk());
+            if(shipUnderAttack.isSunk() == true){
+                setSunked();
+            }
             return true;
         }else{
             enemyBoard.addMissShot({
@@ -75,6 +79,13 @@ function createPlayer(name="Computer"){
     const setShift= function(currentShift){
         shift = currentShift;
     }  
+
+    const setSunked = function () {
+        sunkenShips++;
+    }
+    const getSunkenShips = function(){
+        return sunkenShips;
+    }
     return{
         userName,
         userBoard, 
@@ -82,7 +93,8 @@ function createPlayer(name="Computer"){
         fleet,
         isFleetSunked,
         getShift,
-        setShift
+        setShift,
+        getSunkenShips
     }
 }
 

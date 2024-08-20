@@ -42,7 +42,7 @@ const prepareAttack = function(target,player1, player2){
     let enemyBox = document.querySelectorAll(target);
     enemyBox.forEach(box=>{
             box.addEventListener("click",(e)=>{
-               
+               console.log(box);
                 if(player1.getShift() === true && e.target.parentNode.id == "display-board-two"){
                     if(box.textContent == ""){
                        // box.textContent = "X";
@@ -69,7 +69,7 @@ const prepareAttack = function(target,player1, player2){
 
                 
                 return;
-        }, {once:true});
+        });
 
     });
 
@@ -99,16 +99,16 @@ const playervsPc = function(userName){
     handleDom.setInfo(player1.userName);
     handleDom.drawBoard(player1.userBoard.board, "display-board-one");
     handleDom.drawBoard(player2.userBoard.board, "display-board-two");
-        
+    
    /*Preparamos el tablero*/
     prepareAttack("#display-board-two>.box", player1, player2);
     prepareAttack("#display-board-one>.box", player1, player2);
  
     
     const handleShift = function(){
-        
+        handleDom.handlePlayerShift(player1, player2);
         if (player1.getShift() == true && player2.getShift() == false) {
-
+            
             //handleDom.handleBoard("#display-board-two>", boardPlayer2)
             //vamos a esconder nuestro tablero y mostrar el enemigo
             if (player1.isFleetSunked() === true) {

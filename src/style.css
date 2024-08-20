@@ -116,3 +116,7 @@ header{
     background-color: red;
     margin: 1px;
 }
+
+.clickeable{
+    outline: 1px solid green;
+}

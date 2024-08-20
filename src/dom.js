@@ -16,7 +16,7 @@ const drawBoard = function(board, userBoard){
             let boxBoard = document.createElement("div"); 
             boxBoard.classList.add("box"); 
             //boxBoard.classList.add("row-center")
-            boxBoard.innerHTML = box;
+            boxBoard.innerHTML = "";
             boardUser.appendChild(boxBoard);
             boxBoard.dataset.row = rowBoard;
             boxBoard.dataset.column = columnBoard;
@@ -122,21 +122,18 @@ const handleShift = function(box, target, player){
     
     /*La idea acá es que si es el turno del player2 se muestre el board del player1 nada más, no revelar la posicion de las naces
     y mostrar todos los disparos fallidos*/
-    console.log(target)
-    const boardUser = document.getElementById(`${target}`);
+    
    
 
     let missesShots = player.userBoard.getMissesShots();
     let successful_shots = player.userBoard.getSuccessful_shots();
 
-    console.log("miss");
-    console.log(missesShots)
-    console.log("succ");
-    console.log(successful_shots)
 
     let boxes = document.querySelectorAll(`#${target}>.box`);
-    boxes.forEach(box=>{
 
+
+    boxes.forEach(box=>{
+        
         missesShots.forEach(shot => {
             if(shot.x == box.dataset.row && box.dataset.column == shot.y){
                 box.textContent = "X";
@@ -147,11 +144,45 @@ const handleShift = function(box, target, player){
             if(shot.x == box.dataset.row && box.dataset.column == shot.y){
                 box.textContent = "O";
             }
+            
         });
+
     })
 
-   
-
-
 }
-export default { drawBoard, setDragShips, setInfo, handleBoard, handleShift }
+
+const handlePlayerShift = function(player1, player2){
+
+    if (player1.getShift() == true && player2.getShift()==false) {
+
+        document.querySelector("#shift-sunked-one").textContent = `${player1.getSunkenShips()}`;
+        
+        document.querySelector("#shift-player-one").textContent = "It's your shift!";
+        document.querySelector("#shift-player-two").textContent = "";
+        let boxes = document.querySelectorAll(`#display-board-two>.box`);
+        boxes.forEach(box =>{
+            box.classList.add("clickeable");
+        });
+
+        let enemyBoxes = document.querySelectorAll(`#display-board-one>.box`);
+        enemyBoxes.forEach(box =>{
+            box.classList.remove("clickeable");
+        });
+        return;
+    }else if(player1.getShift() == false && player2.getShift()==true){
+        document.querySelector("#shift-sunked-two").textContent = `${player2.getSunkenShips()}`;
+        document.querySelector("#shift-player-one").textContent = "";
+        document.querySelector("#shift-player-two").textContent = "It's your shift!";
+        let boxes = document.querySelectorAll(`#display-board-one>.box`);
+        boxes.forEach(box =>{
+            box.classList.add("clickeable");
+        });
+
+        let enemyBoxes = document.querySelectorAll(`#display-board-two>.box`);
+        enemyBoxes.forEach(box =>{
+            box.classList.remove("clickeable");
+        });
+        return;
+    }
+}
+export default { drawBoard, setDragShips, setInfo, handleBoard, handleShift, handlePlayerShift }
